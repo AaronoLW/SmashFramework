@@ -5,12 +5,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Version>1.2.3</Version>
+    <Version>2.0.0</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Authors>AaronoLW</Authors>
     <Copyright>Copyright 2026 AaronoLW</Copyright>
-    <RepositoryUrl>https://github.com/Aaron-LW/Smash-Framework</RepositoryUrl>
+    <RepositoryUrl>https://github.com/AaronoLW/SmashFramework</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <Description>A very simple framework for making games/graphical applications built on top of SDL3</Description>
     <IsAotCompatible>true</IsAotCompatible>
@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-   <None Include="..\README.md" Pack="true" PackagePath="\" />
-   <None Include="..\LICENSE" Pack="true" PackagePath="\" />
+   <None Include="README.md" Pack="true" PackagePath="\" />
+   <None Include="LICENSE" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>

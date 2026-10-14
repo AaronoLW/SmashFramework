@@ -4,17 +4,9 @@ using SDL3;
 
 namespace SmashFramework;
 
-public class Renderer : IDisposable
+public class Renderer(Window window) : IDisposable
 {
-    /// <summary>
-    /// The handle of this instance of the Renderer class
-    /// </summary>
-    public nint Handle;
-
-    public Renderer(nint rendererHandle)
-    {
-        Handle = rendererHandle;
-    }
+    public readonly nint Handle = SDL.CreateRenderer(window.Handle, null);
 
     /// <summary>
     /// Clears the screen with the specified color
@@ -29,12 +21,6 @@ public class Renderer : IDisposable
     /// <summary>
     ///Renders a Texture to the screen
     /// </summary>
-    /// <param name="texture">The Texture2D to be drawn to the screen</param>
-    /// <param name="position">The position where the texture should be drawn at</param>
-    /// <param name="color">The color which the texture should have</param>
-    /// <param name="width">The width the texture will be scaled to</param>
-    /// <param name="height">The height the texture will be scaled to</param>
-    /// <param name="scale">The scale which the textures bounds should be multiplied with</param>
     public void RenderTexture(Texture2D texture, Vector2 position, Color color, float scale = 1)
     {
         SDL.FRect dstRect = new SDL.FRect

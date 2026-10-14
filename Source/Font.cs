@@ -21,22 +21,7 @@ public class Font : IDisposable, IAsset
 
     internal nint GetOrCreateText(string text, float pointSize)
     {
-        if (_alreadyCreatedTexts.TryGetValue(pointSize, out var font))
-        {
-            if (font.texts.TryGetValue(text, out nint textObject))
-            {
-                return textObject;
-            }
-        }
-        else
-        {
-            _alreadyCreatedTexts.Add(pointSize, (TTF.OpenFont(_fontPath, pointSize), new()));
-        }
-
-        nint textObjectHandle = TTF.CreateText(SmashEngine._fontEngine, _alreadyCreatedTexts[pointSize].handle, text, 0);
-        _alreadyCreatedTexts[pointSize].texts[text] = textObjectHandle;
-
-        return textObjectHandle;
+        return 0;
     }
 
     public void Dispose()
