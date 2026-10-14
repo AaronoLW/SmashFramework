@@ -57,6 +57,9 @@ public static class AssetManager
         throw new Exception($"{assetName} could not be found");
     }
 
+    /// <summary>
+    /// Gets the assets name by its id
+    /// </summary>
     public static string GetAssetName(int id)
     {
         return _aliases.FirstOrDefault(x => x.Value == id).Key;
@@ -99,6 +102,9 @@ public static class AssetManager
         return texture;
     }
 
+    /// <summary>
+    /// Adds a texture region to a texture. This texture can be retrieved by calling AssetManager.Get<Texture2D>(name);
+    /// </summary>
     public static Texture2D AddTextureRegion(string name, TextureRegion textureRegion)
     {
         if (!_aliases.TryGetValue(textureRegion.BaseTextureName, out int baseTextureId))
@@ -114,6 +120,9 @@ public static class AssetManager
         return texture;
     }
 
+    /// <summary>
+    /// Disposes all assets
+    /// </summary>
     public static void Dispose()
     {
         foreach (IAsset asset in LoadedAssets)

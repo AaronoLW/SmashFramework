@@ -6,7 +6,11 @@ namespace SmashFramework;
 
 public class Renderer : IDisposable
 {
+    /// <summary>
+    /// The handle of the SDL renderer
+    /// </summary>
     public readonly nint Handle;
+
     private readonly TextEngine _textEngine;
 
     public Renderer(Window window)
@@ -18,7 +22,6 @@ public class Renderer : IDisposable
     /// <summary>
     /// Clears the screen with the specified color
     /// </summary>
-    /// <param name="color">The color which the screen should be set to</param>
     public void Clear(Color color)
     {
         SDL.SetRenderDrawColor(Handle, color.R, color.G, color.B, 1);
