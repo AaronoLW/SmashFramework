@@ -1,5 +1,4 @@
 using System.Numerics;
-using System.Runtime.InteropServices;
 using SDL3;
 
 namespace SmashFramework;
@@ -11,11 +10,6 @@ public static class Input
     public static Vector2 MousePosition => new Vector2(MouseX, MouseY);
 
     public static float ScrollWheelDelta { get; private set; }
-
-    /// <summary>
-    /// The characters the user has entered this frame
-    /// </summary>
-    public static string? TextInput { get; private set; }
 
     private static HashSet<SDL.Keycode> _previousDownKeys = new();
     private static HashSet<SDL.Keycode> _previousPressedKeys = new();
@@ -104,7 +98,6 @@ public static class Input
         _leftMousePressed = false;
         _rightMousePressed = false;
         _middleMousePressed = false;
-        TextInput = null;
         ScrollWheelDelta = 0;
     }
 
