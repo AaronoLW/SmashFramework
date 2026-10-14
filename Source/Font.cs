@@ -1,41 +1,33 @@
-using System.Numerics;
 using SDL3;
 
-namespace SmashFramework;
-
-public class Font : IDisposable, IAsset
+public class Font : IDisposable
 {
-    internal string _fontPath;
-    internal Dictionary<float, (nint handle, Dictionary<string, nint> texts)> _alreadyCreatedTexts = new();
-
-    public Font(string fontPath)
+    public readonly string Path;
+    public float PointSize
     {
-        _fontPath = fontPath;
+        get => TTF.GetFontSize(_fontHandle);
+        set { SetFontSize(value); }
     }
 
-    public Vector2 MeasureString(string text, float pointSize)
+    internal nint _fontHandle { get; private set; }
+
+    public Font(string path, float initialPointSize)
     {
-        TTF.GetTextSize(GetOrCreateText(text, pointSize), out int widht, out int height);
-        return new Vector2(widht, height);
+        Path = path;
+        _fontHandle = TTF.OpenFont(path, initialPointSize);
     }
 
-    internal nint GetOrCreateText(string text, float pointSize)
+    private void SetFontSize(float pointSize)
     {
-        return 0;
+        if (pointSize != PointSize)
+        {
+            TTF.CloseFont(_fontHandle);
+            _fontHandle = TTF.OpenFont(Path, pointSize);
+        }
     }
 
     public void Dispose()
     {
-        foreach (var idklol in _alreadyCreatedTexts.Values)
-        {
-            foreach (nint alreadyCreatedText in idklol.texts.Values)
-            {
-                TTF.DestroyText(alreadyCreatedText);
-            }
-
-            TTF.CloseFont(idklol.handle);
-        }
-
-        _alreadyCreatedTexts.Clear();
+        TTF.CloseFont(_fontHandle);
     }
 }

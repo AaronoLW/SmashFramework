@@ -4,9 +4,16 @@ using SDL3;
 
 namespace SmashFramework;
 
-public class Renderer(Window window) : IDisposable
+public class Renderer : IDisposable
 {
-    public readonly nint Handle = SDL.CreateRenderer(window.Handle, null);
+    public readonly nint Handle;
+    private readonly TextEngine _textEngine;
+
+    public Renderer(Window window)
+    {
+        Handle = SDL.CreateRenderer(window.Handle, null);
+        _textEngine = new(this);
+    }
 
     /// <summary>
     /// Clears the screen with the specified color
@@ -168,14 +175,11 @@ public class Renderer(Window window) : IDisposable
     }
 
     /// <summary>
-    /// Renders text to the screen at the specified position
+    /// Renders a string to the screen at the specified position
     /// </summary>
-    public void RenderText(Font font, float pointSize, string text, Vector2 position, Color color)
+    public void RenderString(Font font, string text, Vector2 position, Color color)
     {
-        nint textObject = font.GetOrCreateText(text, pointSize);
-
-        TTF.SetTextColor(textObject, color.R, color.G, color.B, color.A);
-        TTF.DrawRendererText(textObject, position.X, position.Y);
+        _textEngine.RenderString(font, text, position, color);
     }
 
     /// <summary>
@@ -222,6 +226,7 @@ public class Renderer(Window window) : IDisposable
 
     public void Dispose()
     {
+        _textEngine.Dispose();
         SDL.DestroyRenderer(Handle);
     }
 }

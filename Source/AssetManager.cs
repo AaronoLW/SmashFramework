@@ -4,10 +4,9 @@ namespace SmashFramework;
 
 public static class AssetManager
 {
-    internal static List<IAsset> LoadedAssets { get; } = new();
-    internal static Dictionary<string, int> _aliases = new();
+    internal static readonly List<IAsset> LoadedAssets = [];
+    internal static Dictionary<string, int> _aliases = [];
 
-    private static string _rootDirectoryPath = "";
     private static BlendMode _defaultBlendMode = BlendMode.Blend;
     private static ScaleMode _defaultScaleMode = ScaleMode.Linear;
 
@@ -24,9 +23,7 @@ public static class AssetManager
     /// </summary>
     public static T? TryGet<T>(string assetName) where T : IAsset
     {
-        int id;
-
-        if (!_aliases.TryGetValue(assetName, out id))
+        if (!_aliases.TryGetValue(assetName, out int id))
             return default;
 
         return (T)LoadedAssets[id];
@@ -66,15 +63,6 @@ public static class AssetManager
     }
 
     /// <summary>
-    /// Sets the relative path from which all assets will be loaded
-    /// </summary>
-    /// <param name="directoryPath"></param>
-    public static void SetAssetRootDirectory(string directoryPath)
-    {
-        _rootDirectoryPath = directoryPath;
-    }
-
-    /// <summary>
     /// Sets the default blend mode that should be applied to every loaded Texture2D after this function has been called
     /// </summary>
     public static void SetDefaultBlendMode(BlendMode blendMode)
@@ -91,17 +79,17 @@ public static class AssetManager
     }
 
     /// <summary>
-    /// Loads a Texture2D from an image relative to the root directory path
+    /// Loads a Texture2D from an image
     /// </summary>
-    public static Texture2D LoadTexture(string relativePath, Renderer renderer)
+    public static Texture2D LoadTexture(string path, Renderer renderer)
     {
-        string fullPath = Path.Combine(_rootDirectoryPath, relativePath);
-        string fileName = Path.GetFileNameWithoutExtension(fullPath);
+        string fileName = Path.GetFileNameWithoutExtension(path);
 
-        if (!File.Exists(fullPath)) throw new FileNotFoundException($"File at {fullPath} could not be found");
+        if (!File.Exists(path))
+            throw new FileNotFoundException($"File at {path} could not be found");
 
-        nint textureHandle = Image.LoadTexture(renderer.Handle, fullPath);
-        Texture2D texture = new Texture2D(textureHandle, fileName);
+        nint textureHandle = Image.LoadTexture(renderer.Handle, path);
+        Texture2D texture = new(textureHandle, fileName);
 
         SDL.SetTextureBlendMode(texture.Handle, (SDL.BlendMode)_defaultBlendMode);
         SDL.SetTextureScaleMode(texture.Handle, (SDL.ScaleMode)_defaultScaleMode);
@@ -113,35 +101,17 @@ public static class AssetManager
 
     public static Texture2D AddTextureRegion(string name, TextureRegion textureRegion)
     {
-        int baseTextureId;
-
-        if (!_aliases.TryGetValue(textureRegion.BaseTextureName, out baseTextureId))
+        if (!_aliases.TryGetValue(textureRegion.BaseTextureName, out int baseTextureId))
             throw new Exception($"""Base texture "{textureRegion.BaseTextureName}" could not be found""");
 
         Texture2D? baseTexture = LoadedAssets[baseTextureId] as Texture2D;
         if (baseTexture == null) throw new Exception($"""Base texture {textureRegion.BaseTextureName} doesn't exist""");
 
-        Texture2D texture = new Texture2D(baseTexture.Handle, name, new Rectangle(textureRegion.X, textureRegion.Y, textureRegion.Width, textureRegion.Height));
+        Texture2D texture = new(baseTexture.Handle, name, new Rectangle(textureRegion.X, textureRegion.Y, textureRegion.Width, textureRegion.Height));
         _aliases.Add(name, LoadedAssets.Count);
         LoadedAssets.Add(texture);
 
         return texture;
-    }
-
-    /// <summary>
-    /// Loads a Font from a .ttf file relative to the root directory path
-    /// </summary>
-    public static void LoadFont(string relativePath)
-    {
-        string fullPath = Path.Combine(_rootDirectoryPath, relativePath);
-        string fontName = Path.GetFileNameWithoutExtension(fullPath);
-
-        if (!File.Exists(fullPath)) throw new FileNotFoundException($"Font at {fullPath} could not be found");
-
-        Font font = new Font(fullPath);
-
-        _aliases.Add(fontName, LoadedAssets.Count);
-        LoadedAssets.Add(font);
     }
 
     public static void Dispose()
