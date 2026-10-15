@@ -1,7 +1,6 @@
 using System.Drawing;
 using System.Numerics;
 using SDL3;
-using SmashFramework;
 
 internal class FontSize : IDisposable
 {
@@ -10,11 +9,6 @@ internal class FontSize : IDisposable
     public FontSize(string path, float pointSize)
     {
         Handle = TTF.OpenFont(path, pointSize);
-    }
-
-    ~FontSize()
-    {
-        Dispose();
     }
 
     public Vector2 MeasureString(string text, TextEngine textEngine)

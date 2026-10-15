@@ -5,7 +5,7 @@ namespace SmashFramework;
 public class Font : IDisposable, IAsset
 {
     public readonly string Path;
-    private Dictionary<float, FontSize> _fontSizes = [];
+    private readonly Dictionary<float, FontSize> _fontSizes = [];
 
     private readonly TextEngine _textEngine;
 
@@ -32,14 +32,20 @@ public class Font : IDisposable, IAsset
         return fontSize.MeasureString(text, _textEngine);
     }
 
-    public void ClearCache()
+    public void DeleteSizeIfExists(float pointSize)
     {
-        Dispose();
+        if (_fontSizes.ContainsKey(pointSize))
+        {
+            _fontSizes[pointSize].Dispose();
+            _fontSizes.Remove(pointSize);
+        }
     }
 
     public void Dispose()
     {
         foreach (FontSize fontSize in _fontSizes.Values)
             fontSize.Dispose();
+
+        _fontSizes.Clear();
     }
 }
