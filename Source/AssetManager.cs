@@ -120,6 +120,17 @@ public static class AssetManager
         return texture;
     }
 
+    public static Font LoadFont(string fontPath, Renderer renderer)
+    {
+        Font font = new(fontPath, renderer._textEngine);
+
+        string fileName = Path.GetFileNameWithoutExtension(fontPath);
+        _aliases.Add(fileName, LoadedAssets.Count);
+        LoadedAssets.Add(font);
+
+        return (Font)LoadedAssets[_aliases[fileName]];
+    }
+
     /// <summary>
     /// Disposes all assets
     /// </summary>

@@ -11,9 +11,12 @@ public class Renderer : IDisposable
     /// </summary>
     public readonly nint Handle;
 
+    internal readonly TextEngine _textEngine;
+
     public Renderer(Window window)
     {
         Handle = SDL.CreateRenderer(window.Handle, null);
+        _textEngine = new(this);
     }
 
     /// <summary>
@@ -54,13 +57,6 @@ public class Renderer : IDisposable
     /// <summary>
     ///Renders a Texture to the screen
     /// </summary>
-    /// <param name="texture">The Texture2D to be drawn to the screen</param>
-    /// <param name="x">The x position where the texture should be drawn at</param>
-    /// <param name="y">The y position where the texture should be drawn at </param>
-    /// <param name="color">The color which the texture should have</param>
-    /// <param name="width">The width the texture will be scaled to</param>
-    /// <param name="height">The height the texture will be scaled to</param>
-    /// <param name="scale">The scale which the textures bounds should be multiplied with</param>
     public void RenderTexture(Texture2D texture, float x, float y, Color color, float scale = 1)
     {
         SDL.FRect dstRect = new SDL.FRect
@@ -128,8 +124,6 @@ public class Renderer : IDisposable
     /// <summary>
     /// Renders a point at the specified position
     /// </summary>
-    /// <param name="position"></param>
-    /// <param name="color"></param>
     public void RenderPoint(Vector2 position, Color color)
     {
         SDL.SetRenderDrawColor(Handle, color.R, color.G, color.B, color.A);
@@ -139,8 +133,6 @@ public class Renderer : IDisposable
     /// <summary>
     /// Renders a point at the specified position
     /// </summary>
-    /// <param name="position"></param>
-    /// <param name="color"></param>
     public void RenderPoint(float x, float y, Color color)
     {
         SDL.SetRenderDrawColor(Handle, color.R, color.G, color.B, color.A);
@@ -150,8 +142,6 @@ public class Renderer : IDisposable
     /// <summary>
     /// Renders a non-filled rectangle
     /// </summary>
-    /// <param name="rectangle">The rectangle to be drawn</param>
-    /// <param name="color">The color the rectangle should have</param>
     public void RenderRectangle(Rectangle rectangle, Color color)
     {
         SDL.SetRenderDrawColor(Handle, color.R, color.G, color.B, color.A);
@@ -163,8 +153,6 @@ public class Renderer : IDisposable
     /// <summary>
     /// Renders a filled rectangle with the specified color
     /// </summary>
-    /// <param name="rectangle">The rectangle to be drawn</param>
-    /// <param name="color">The color the rectangle should appear as</param>
     public void RenderFilledRectangle(Rectangle rectangle, Color color)
     {
         SDL.SetRenderDrawColor(Handle, color.R, color.G, color.B, color.A);
@@ -177,9 +165,10 @@ public class Renderer : IDisposable
     /// <summary>
     /// Renders a string to the screen at the specified position
     /// </summary>
-    public void RenderString(Font font, string text, Vector2 position, Color color)
+    public void RenderString(Font font, float pointSize, string text, Vector2 position, Color color)
     {
-        font.RenderString(text, position, color);
+        FontSize fontSize = font.GetOrCreateFontSize(pointSize);
+        fontSize.RenderString(_textEngine, text, position, color);
     }
 
     /// <summary>
@@ -226,6 +215,7 @@ public class Renderer : IDisposable
 
     public void Dispose()
     {
+        _textEngine.Dispose();
         SDL.DestroyRenderer(Handle);
     }
 }

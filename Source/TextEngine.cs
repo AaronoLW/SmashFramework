@@ -1,5 +1,3 @@
-using System.Drawing;
-using System.Numerics;
 using SDL3;
 using SmashFramework;
 
