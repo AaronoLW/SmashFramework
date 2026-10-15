@@ -11,12 +11,9 @@ public class Renderer : IDisposable
     /// </summary>
     public readonly nint Handle;
 
-    private readonly TextEngine _textEngine;
-
     public Renderer(Window window)
     {
         Handle = SDL.CreateRenderer(window.Handle, null);
-        _textEngine = new(this);
     }
 
     /// <summary>
@@ -182,7 +179,7 @@ public class Renderer : IDisposable
     /// </summary>
     public void RenderString(Font font, string text, Vector2 position, Color color)
     {
-        _textEngine.RenderString(font, text, position, color);
+        font.RenderString(text, position, color);
     }
 
     /// <summary>
@@ -229,7 +226,6 @@ public class Renderer : IDisposable
 
     public void Dispose()
     {
-        _textEngine.Dispose();
         SDL.DestroyRenderer(Handle);
     }
 }
