@@ -11,7 +11,7 @@ public static class SystemFontResolver
     /// <summary>
     /// Resolves a system font name to an absolute file path.
     /// </summary>
-    public static string? Resolve(string fontName)
+    public static string? ResolveByName(string fontName)
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
             return GetLinuxFontPath(fontName);
@@ -20,6 +20,40 @@ public static class SystemFontResolver
             return GetWindowsFontPath(fontName);
 
         throw new PlatformNotSupportedException("Operating system not supported.");
+    }
+
+    public static string[]? ResolveByFamily(string fontFamily)
+    {
+        if (!(RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD)))
+            throw new PlatformNotSupportedException("Operating system not supported.");
+
+        try
+        {
+            ProcessStartInfo info = new()
+            {
+                FileName = "/bin/bash",
+                Arguments = "-c \"fc-list -f '%{file}\n'" + $" | grep -i '{fontFamily}'\"",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            using var process = Process.Start(info);
+            if (process != null)
+            {
+                string path = process.StandardOutput.ReadToEnd().Trim();
+                process.WaitForExit();
+
+                return path.Split('\n');
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[Warning] Failed to run fc-match: {ex.Message}");
+        }
+
+        return null;
     }
 
     private static string? GetLinuxFontPath(string fontName)

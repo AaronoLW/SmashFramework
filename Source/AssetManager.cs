@@ -132,6 +132,9 @@ public static class AssetManager
 
     public static Font LoadFont(string fontPath, Renderer renderer)
     {
+        if (!File.Exists(fontPath))
+            throw new FileNotFoundException($"Font at {fontPath} doesn't exist");
+
         Font font = new(fontPath, renderer._textEngine);
 
         string fileName = Path.GetFileNameWithoutExtension(fontPath);
