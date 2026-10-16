@@ -4,7 +4,7 @@ using SDL3;
 
 internal class FontSize : IDisposable
 {
-    public readonly nint Handle;
+    public nint Handle { get; private set; }
 
     public FontSize(string path, float pointSize)
     {
@@ -14,6 +14,10 @@ internal class FontSize : IDisposable
     public Vector2 MeasureString(string text, TextEngine textEngine)
     {
         nint textObject = CreateText(text, textEngine);
+
+        if (textObject == 0)
+            throw new InvalidOperationException($"MeasureString: Failed to create text object: {SDL.GetError()}");
+
         TTF.GetTextSize(textObject, out int w, out int h);
 
         TTF.DestroyText(textObject);
@@ -23,6 +27,10 @@ internal class FontSize : IDisposable
     internal void RenderString(TextEngine textEngine, string text, Vector2 position, Color color)
     {
         nint textObject = CreateText(text, textEngine);
+
+        if (textObject == 0)
+            throw new InvalidOperationException($"RenderString: Failed to create text object: {SDL.GetError()}");
+
         TTF.SetTextColor(textObject, color.R, color.G, color.B, color.A);
 
         TTF.DrawRendererText(textObject, position.X, position.Y);
@@ -37,5 +45,6 @@ internal class FontSize : IDisposable
     public void Dispose()
     {
         TTF.CloseFont(Handle);
+        Handle = 0;
     }
 }

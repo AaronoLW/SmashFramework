@@ -11,11 +11,17 @@ public class Renderer : IDisposable
     /// </summary>
     public readonly nint Handle;
 
-    internal readonly TextEngine _textEngine;
+    internal TextEngine _textEngine { get; private set; }
 
     public Renderer(Window window)
     {
         Handle = SDL.CreateRenderer(window.Handle, null);
+        _textEngine = new(this);
+    }
+
+    public void RefreshTextEngine()
+    {
+        _textEngine.Dispose();
         _textEngine = new(this);
     }
 

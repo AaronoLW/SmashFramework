@@ -47,6 +47,16 @@ public static class AssetManager
         return (T)LoadedAssets[assetId];
     }
 
+    public static void Remove(string assetName)
+    {
+        if (_aliases.TryGetValue(assetName, out int index))
+        {
+            LoadedAssets[index].Dispose();
+            LoadedAssets.RemoveAt(index);
+            _aliases.Remove(assetName);
+        }
+    }
+
     public static int GetAssetId(string assetName)
     {
         if (_aliases.TryGetValue(assetName, out int id))
