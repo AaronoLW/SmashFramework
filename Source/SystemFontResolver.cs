@@ -3,6 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace SmashFramework;
 
+/// <summary>
+/// Helper class to get absolute font paths from a font name
+/// </summary>
 public static class SystemFontResolver
 {
     /// <summary>

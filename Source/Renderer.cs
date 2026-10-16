@@ -19,6 +19,11 @@ public class Renderer : IDisposable
         _textEngine = new(this);
     }
 
+    /// <summary>
+    /// Refreshes the internal TextEngine used for text rendering.
+    /// This can lower RAM usage if you are drawing a lot of Text.
+    /// This should never be called before RenderPresent().
+    /// </summary>
     public void RefreshTextEngine()
     {
         _textEngine.Dispose();
@@ -86,6 +91,9 @@ public class Renderer : IDisposable
         SDL.RenderTexture(Handle, texture.Handle, texture._sourceRectangle, dstRect);
     }
 
+    /// <summary>
+    ///Renders a Texture to the screen but with rotation
+    /// </summary>
     public void RenderTextureRotated(Texture2D texture, Vector2 position, Color color, double angle, float scale = 1)
     {
         SDL.FRect rect = new SDL.FRect
@@ -197,6 +205,9 @@ public class Renderer : IDisposable
         SDL.RenderDebugText(Handle, x, y, text);
     }
 
+    /// <summary>
+    /// Sets the blend mode lol
+    /// </summary>
     public void SetRenderBlendMode(BlendMode blendMode)
     {
         SDL.SetRenderDrawBlendMode(Handle, (SDL.BlendMode)blendMode);
