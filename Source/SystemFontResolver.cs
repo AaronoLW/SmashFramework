@@ -1,5 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
+using Microsoft.Win32;
 
 namespace SmashFramework;
 
@@ -24,9 +26,17 @@ public static class SystemFontResolver
 
     public static string[]? ResolveByFamily(string fontFamily)
     {
-        if (!(RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD)))
-            throw new PlatformNotSupportedException("Operating system not supported.");
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
+            return GetLinuxFontFamily(fontFamily);
 
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            return GetWindowsFontFamily(fontFamily);
+
+        throw new PlatformNotSupportedException("Your operating system is not supported by the SmashFramework");
+    }
+
+    private static string[]? GetLinuxFontFamily(string fontFamily)
+    {
         try
         {
             ProcessStartInfo info = new()
@@ -51,6 +61,44 @@ public static class SystemFontResolver
         catch (Exception ex)
         {
             Console.WriteLine($"[Warning] Failed to run fc-match: {ex.Message}");
+        }
+
+        return null;
+    }
+
+    [SupportedOSPlatform("windows")]
+    private static string[]? GetWindowsFontFamily(string fontFamily)
+    {
+        try
+        {
+            const string keyPath = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts";
+            string fontsDir = Environment.GetFolderPath(Environment.SpecialFolder.Fonts);
+            var results = new List<string>();
+
+            foreach (var root in new[] { Registry.LocalMachine, Registry.CurrentUser })
+            {
+                using var key = root.OpenSubKey(keyPath);
+                if (key == null) continue;
+
+                foreach (string name in key.GetValueNames())
+                {
+                    if (key.GetValue(name) is not string file) continue;
+
+                    bool match =
+                        name.Contains(fontFamily, StringComparison.OrdinalIgnoreCase) ||
+                        Path.GetFileName(file).Contains(fontFamily, StringComparison.OrdinalIgnoreCase);
+
+                    if (!match) continue;
+
+                    results.Add(Path.IsPathRooted(file) ? file : Path.Combine(fontsDir, file));
+                }
+            }
+
+            return results.Count > 0 ? results.Distinct().ToArray() : null;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[Warning] Failed to read font registry: {ex.Message}");
         }
 
         return null;
