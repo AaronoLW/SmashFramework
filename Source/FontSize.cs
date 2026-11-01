@@ -6,9 +6,9 @@ internal class FontSize : IDisposable
 {
     public nint Handle { get; private set; }
 
-    public FontSize(string path, float pointSize)
+    public FontSize(nint streamHandle, float pointSize)
     {
-        Handle = TTF.OpenFont(path, pointSize);
+        Handle = TTF.OpenFontIO(streamHandle, false, pointSize);
     }
 
     public Vector2 MeasureString(string text, TextEngine textEngine)

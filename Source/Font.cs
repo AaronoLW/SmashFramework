@@ -1,17 +1,18 @@
 using System.Numerics;
+using SDL3;
 
 namespace SmashFramework;
 
 public class Font : IDisposable, IAsset
 {
-    public readonly string Path;
     private readonly Dictionary<float, FontSize> _fontSizes = [];
 
+    private readonly SDL.IOStreamOwner _stream;
     private readonly TextEngine _textEngine;
 
-    internal Font(string fontPath, TextEngine textEngine)
+    internal Font(Stream stream, TextEngine textEngine)
     {
-        Path = fontPath;
+        _stream = SDL.IOFromStream(stream);
         _textEngine = textEngine;
     }
 
@@ -22,7 +23,7 @@ public class Font : IDisposable, IAsset
             return alreadyExistingFontSize;
         }
 
-        _fontSizes.Add(pointSize, new(Path, pointSize));
+        _fontSizes.Add(pointSize, new(_stream.Handle, pointSize));
         return _fontSizes[pointSize];
     }
 
@@ -47,5 +48,6 @@ public class Font : IDisposable, IAsset
             fontSize.Dispose();
 
         _fontSizes.Clear();
+        _stream.Dispose();
     }
 }

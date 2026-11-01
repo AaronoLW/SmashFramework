@@ -94,20 +94,26 @@ public static class AssetManager
     /// <summary>
     /// Loads a Texture2D from an image
     /// </summary>
-    public static Texture2D LoadTexture(string path, Renderer renderer)
+    public static Texture2D LoadTexture(string identifier, string path, Renderer renderer)
     {
-        string fileName = Path.GetFileNameWithoutExtension(path);
-
         if (!File.Exists(path))
             throw new FileNotFoundException($"File at {path} could not be found");
 
-        nint textureHandle = Image.LoadTexture(renderer.Handle, path);
-        Texture2D texture = new(textureHandle, fileName);
+        FileStream fs = File.OpenRead(path);
+        return LoadTexture(identifier, fs, renderer);
+    }
+
+    public static Texture2D LoadTexture(string identifier, Stream stream, Renderer renderer)
+    {
+        SDL.IOStreamOwner sdlStream = SDL.IOFromStream(stream);
+
+        nint textureHandle = Image.LoadTextureIO(renderer.Handle, sdlStream.Handle, true);
+        Texture2D texture = new(textureHandle);
 
         SDL.SetTextureBlendMode(texture.Handle, (SDL.BlendMode)_defaultBlendMode);
         SDL.SetTextureScaleMode(texture.Handle, (SDL.ScaleMode)_defaultScaleMode);
 
-        _aliases.Add(fileName, LoadedAssets.Count);
+        _aliases.Add(identifier, LoadedAssets.Count);
         LoadedAssets.Add(texture);
         return texture;
     }
@@ -123,25 +129,30 @@ public static class AssetManager
         Texture2D? baseTexture = LoadedAssets[baseTextureId] as Texture2D;
         if (baseTexture == null) throw new Exception($"""Base texture {textureRegion.BaseTextureName} doesn't exist""");
 
-        Texture2D texture = new(baseTexture.Handle, name, new Rectangle(textureRegion.X, textureRegion.Y, textureRegion.Width, textureRegion.Height));
+        Texture2D texture = new(baseTexture.Handle, new Rectangle(textureRegion.X, textureRegion.Y, textureRegion.Width, textureRegion.Height));
         _aliases.Add(name, LoadedAssets.Count);
         LoadedAssets.Add(texture);
 
         return texture;
     }
 
-    public static Font LoadFont(string fontPath, Renderer renderer)
+    public static Font LoadFont(string identifier, string fontPath, Renderer renderer)
     {
         if (!File.Exists(fontPath))
             throw new FileNotFoundException($"Font at {fontPath} doesn't exist");
 
-        Font font = new(fontPath, renderer._textEngine);
+        FileStream fs = File.OpenRead(fontPath);
+        return LoadFont(identifier, fs, renderer);
+    }
 
-        string fileName = Path.GetFileNameWithoutExtension(fontPath);
-        _aliases.Add(fileName, LoadedAssets.Count);
+    public static Font LoadFont(string identifier, Stream stream, Renderer renderer)
+    {
+        Font font = new(stream, renderer._textEngine);
+
+        _aliases.Add(identifier, LoadedAssets.Count);
         LoadedAssets.Add(font);
 
-        return (Font)LoadedAssets[_aliases[fileName]];
+        return (Font)LoadedAssets[_aliases[identifier]];
     }
 
     /// <summary>
