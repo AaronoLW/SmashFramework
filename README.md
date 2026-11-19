@@ -11,13 +11,12 @@ dotnet add package SmashFramework
 ## Examples
 This example creates a basic window and renders a red rectangle in the middle of it
 ```
-using Color = System.Drawing.Color;
 using SDL3;
 using SmashFramework;
 
 Smash.Init();
 
-Window window = Window.Create("SmashFramework example", 800, 600, SDL.WindowFlags.Resizable);
+Window window = new("SmashFramework example", 800, 600, WindowFlag.Resizable);
 Renderer renderer = new(window);
 
 bool running = true;
@@ -39,8 +38,6 @@ while (running)
     Rectangle rectangle = new(window.Width / 2 - rectangleWidth / 2, window.Height / 2 - rectangleHeight / 2, rectangleWidth, rectangleHeight);
     renderer.RenderFilledRectangle(rectangle, Color.Red);
 
-    renderer.RenderPresent();
+    renderer.Present();
 }
-
-Smash.Quit();
 ```
