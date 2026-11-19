@@ -16,9 +16,9 @@ public class Window : IDisposable
         Handle = windowHandle;
     }
 
-    public Window(string title, int width, int height, params SDL.WindowFlags[] windowFlags)
+    public Window(string title, int width, int height, params WindowFlag[] windowFlags)
     {
-        SDL.WindowFlags flags = windowFlags.Length > 0 ? windowFlags.Aggregate((a, b) => a | b) : 0;
+        SDL.WindowFlags flags = windowFlags.Length > 0 ? windowFlags.Cast<SDL.WindowFlags>().Aggregate((a, b) => a | b) : 0;
         Handle = SDL.CreateWindow(title, width, height, flags);
     }
 
