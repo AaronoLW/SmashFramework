@@ -1,4 +1,3 @@
-using System.Drawing;
 using System.Numerics;
 using SDL3;
 
@@ -11,11 +10,23 @@ public class Renderer : IDisposable
     /// </summary>
     public readonly nint Handle;
 
+    public bool Vsync
+    {
+        get { SDL.GetRenderVSync(Handle, out int vsync); return Convert.ToBoolean(vsync); }
+        set => SDL.SetRenderVSync(Handle, Convert.ToInt32(value));
+    }
+
+    public BlendMode BlendMode
+    {
+        get { SDL.GetRenderDrawBlendMode(Handle, out SDL.BlendMode blendMode); return (BlendMode)blendMode; }
+        set => SDL.SetRenderDrawBlendMode(Handle, (SDL.BlendMode)value);
+    }
+
     internal TextEngine _textEngine { get; private set; }
 
     public Renderer(Window window)
     {
-        Handle = SDL.CreateRenderer(window.Handle, null);
+        Handle = SDL.CreateRenderer(window.Handle, "vulkan,opengl");
         _textEngine = new(this);
     }
 
@@ -206,26 +217,9 @@ public class Renderer : IDisposable
     }
 
     /// <summary>
-    /// Sets the blend mode lol
-    /// </summary>
-    public void SetRenderBlendMode(BlendMode blendMode)
-    {
-        SDL.SetRenderDrawBlendMode(Handle, (SDL.BlendMode)blendMode);
-    }
-
-    /// <summary>
-    /// Enables or disables vsync for this renderer
-    /// </summary>
-    /// <param name="enabled">If vsync should be enabled or not</param>
-    public void SetVSyncEnabled(bool enabled)
-    {
-        SDL.SetRenderVSync(Handle, enabled ? 1 : 0);
-    }
-
-    /// <summary>
     /// Renders everything to the screen
     /// </summary>
-    public void RenderPresent()
+    public void Present()
     {
         SDL.RenderPresent(Handle);
     }

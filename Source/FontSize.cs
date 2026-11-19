@@ -1,6 +1,7 @@
-using System.Drawing;
 using System.Numerics;
 using SDL3;
+
+namespace SmashFramework;
 
 internal class FontSize : IDisposable
 {

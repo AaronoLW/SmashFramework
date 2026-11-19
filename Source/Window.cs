@@ -3,20 +3,26 @@ using SDL3;
 
 namespace SmashFramework;
 
-public class Window(nint windowHandle) : IDisposable
+public class Window : IDisposable
 {
-    public readonly nint Handle = windowHandle;
+    public readonly nint Handle;
 
     public float Width { get { SDL.GetWindowSize(Handle, out int width, out _); return width; } }
     public float Height { get { SDL.GetWindowSize(Handle, out _, out int height); return height; } }
     public Vector2 Size { get { SDL.GetWindowSize(Handle, out int width, out int height); return new(width, height); } }
 
-    private bool _pollingTextInput = false;
-
-    public static Window Create(string title, int width, int height, params SDL.WindowFlags[] windowFlags)
+    public Window(nint windowHandle)
     {
-        return new Window(SDL.CreateWindow(title, width, height, windowFlags.Aggregate((a, b) => a | b)));
+        Handle = windowHandle;
     }
+
+    public Window(string title, int width, int height, params SDL.WindowFlags[] windowFlags)
+    {
+        SDL.WindowFlags flags = windowFlags.Length > 0 ? windowFlags.Aggregate((a, b) => a | b) : 0;
+        Handle = SDL.CreateWindow(title, width, height, flags);
+    }
+
+    private bool _pollingTextInput = false;
 
     public void StartPollingTextInput()
     {
