@@ -10,7 +10,8 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Authors>AaronoLW</Authors>
     <Copyright>Copyright 2026 AaronoLW</Copyright>
-    <RepositoryUrl>https://github.com/AaronoLW/SmashFramework</RepositoryUrl>
+    <ProjectUrl>https://github.com/AaronoLW/SmashFramework</ProjectUrl>
+    <RepositoryUrl>https://github.com/AaronoLW/SmashFramework.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <Description>A very simple framework for making games/graphical applications built on top of SDL3</Description>
     <IsAotCompatible>true</IsAotCompatible>
