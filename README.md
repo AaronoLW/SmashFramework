@@ -40,4 +40,6 @@ while (running)
 
     renderer.Present();
 }
+
+Smash.Quit();
 ```
