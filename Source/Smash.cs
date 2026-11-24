@@ -14,23 +14,13 @@ public static class Smash
     /// </summary>
     public static ulong PerformanceFrequency => SDL.GetPerformanceFrequency();
 
-    public static bool Init()
+    public static void Init()
     {
-        try
-        {
-            if (!SDL.Init(SDL.InitFlags.Video))
-                throw new Exception($"SDL couldn't initialize: {SDL.GetError()}");
+        if (!SDL.Init(SDL.InitFlags.Video))
+            throw new Exception($"SDL couldn't initialize: {SDL.GetError()}");
 
-            if (!TTF.Init())
-                throw new Exception($"SDL TTF couldn't initialize: {SDL.GetError()}");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            return false;
-        }
-
-        return true;
+        if (!TTF.Init())
+            throw new Exception($"SDL TTF couldn't initialize: {SDL.GetError()}");
     }
 
     public static void Quit()
