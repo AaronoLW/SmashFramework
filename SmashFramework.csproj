@@ -5,18 +5,23 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Version>2.2.3</Version>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>SmashFramework</PackageId>
     <Authors>AaronoLW</Authors>
+    <Version>2.2.3</Version>
     <Copyright>Copyright 2026 AaronoLW</Copyright>
-    <ProjectUrl>https://github.com/AaronoLW/SmashFramework</ProjectUrl>
+    <PackageProjectUrl>https://github.com/AaronoLW/SmashFramework</PackageProjectUrl>
     <RepositoryUrl>https://github.com/AaronoLW/SmashFramework.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <Description>A very simple framework for making games/graphical applications built on top of SDL3</Description>
     <IsAotCompatible>true</IsAotCompatible>
-    <DebugSymbols>false</DebugSymbols>
-    <DebugType>none</DebugType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
